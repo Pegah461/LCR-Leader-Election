@@ -33,32 +33,14 @@ This project implements the **LCR Leader Election Algorithm** in a simulated dis
 * ✅ RMI‑based communication between processes
 * ✅ Configurable start times for triggering elections
 
-## Architecture
-
-```mermaid
-flowchart LR
-  subgraph Ring Topology
-    A[Process 1] --> B[Process 2]
-    B --> C[Process 3]
-    C --> D[Process N]
-    D --> A
-  end
-  A -.ELECTION/LEADER msgs.-> B
-```
-
-* Each process knows only its **successor** in the ring.
-* `ELECTION(uid)` messages circulate clockwise until the highest UID completes a full round.
-* The elected leader broadcasts `LEADER(uid)` once.
-
 ## Project Structure
 
 ```
-LCR-RMI/
+LCR-Leader-Election-Protocol/
 ├─ Api.java          # RMI interface for election and leader messages
 ├─ ApiImpl.java      # Implementation of Api; handles election logic
-├─ App.java          # Main entry point; bootstraps processes and RMI registry
+├─ App.java          # Contains main class and the login for node binding
 ├─ Node.java         # Simple data model for Node with unique ID
-└─ README.md
 ```
 
 ## Getting Started
@@ -66,14 +48,11 @@ LCR-RMI/
 ### Prerequisites
 
 * Java 17+ (or compatible version)
-* Maven or Gradle
 
-### Build
+### Compile
 
 ```bash
-mvn clean package
-# or
-gradle build
+javac *.java    #compiles all the java classes
 ```
 
 ### Run
@@ -87,8 +66,12 @@ java App <process_id> <nextProcess> <registryPort> <nextPort> <startAt(HH:mm:ss)
 Example:
 
 ```bash
-java App 1 localhost 1099 1100 12:00:00
-java App 2 localhost 1100 1101 12:00:05
+java App 5 process11 1099 1100 12:00:00  
+java App 11 process2 1100 1101 12:00:00
+java App 2 process7 1101 1102 12:00:00
+java App 7 process5 1102 1099 12:00:00
+#Note: The time has to be the same for all nodes in the ring.
+#      In this way they all gonna start the election at the sametime.
 ```
 
 ## Usage
@@ -109,7 +92,7 @@ Sample console output:
       P R O C E S S [2]
 ---------------------------------------------
 PORT : 1100
-CONNECTED TO: localhost AT PORT: 1101
+CONNECTED TO: process5 AT PORT: 1101
 =============================================
 ```
 
@@ -121,17 +104,3 @@ CONNECTED TO: localhost AT PORT: 1101
 | **ApiImpl** | Implements election logic: forwards messages, tracks leader, prevents duplicate elections |
 | **Node**    | Encapsulates node identity (UID) with getter/setter                                       |
 | **App**     | Main runner; starts processes, connects RMI registries, prints console UI                 |
-
-## Testing
-
-Run JUnit tests (if provided):
-
-```bash
-mvn test
-# or
-gradle test
-```
-
-## License
-
-This project is licensed under the MIT License — see [LICENSE](./LICENSE) for details.
