@@ -8,17 +8,14 @@ A simple Java implementation of the **Le Lann–Chang–Roberts (LCR) Leader Ele
 
 * [Overview](#overview)
 * [Features](#features)
-* [Architecture](#architecture)
 * [Project Structure](#project-structure)
 * [Getting Started](#getting-started)
 
   * [Prerequisites](#prerequisites)
-  * [Build](#build)
+  * [Compile](#compile)
   * [Run](#run)
 * [Usage](#usage)
 * [Core Classes](#core-classes)
-* [Testing](#testing)
-* [License](#license)
 
 ---
 
