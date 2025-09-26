@@ -65,10 +65,10 @@ public class PeerRegisterImpl extends UnicastRemoteObject implements PeerRegiste
             predecessor.setNextNode(newNode);
             newNode.setNextNode(successor);
 
-            System.out.println("[PR] Rewired: pred(" + predId + ") -> " + id + " -> succ(" + succId + ")");
+            System.out.println("[PR] Configuring Ring: pred(" + predId + ") -> " + id + " -> succ(" + succId + ")");
 
         } catch (Exception e) {
-            throw new RemoteException("PeerRegister: wiring failed for Process[" + id + "]: " + e, e);
+            throw new RemoteException("PeerRegister: ring configuration failed for Process[" + id + "]: " + e, e);
         }
 
         return true;
@@ -147,5 +147,6 @@ public class PeerRegisterImpl extends UnicastRemoteObject implements PeerRegiste
         try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor(); // Clear console
         printDISP(port);
+        System.out.println("[PR] Waiting for Nodes to Join...");
     }
 }
