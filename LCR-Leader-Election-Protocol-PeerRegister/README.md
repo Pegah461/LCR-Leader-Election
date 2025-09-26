@@ -17,56 +17,36 @@ A Java RMI implementation of the **Le Lann–Chang–Roberts (LCR)** leader elec
 ├─ NodeImpl.java            # Node logic (recieveELECTION / recieveLEADER)
 ├─ PeerRegister.java        # RMI interface for the register
 ├─ PeerRegisterImpl.java    # Register logic (join order, rewiring, gating)
-└─ README.md
 ```
 
-### Prerequisites
+## Prerequisites
 * Java 17+ (or compatible)
 
-### How It Works
+## How It Works
 
-
-### Setup Instructions
+## Setup Instructions
 ### 1: Compile The Code
 1. Open terminal and navigate to the directory that contains the source files.
-2. Compile the source files using the 'javac' command:
-   '''bash
+2. Compile the source files using the `javac` command:
+   ```bash
    javac *.java
-   '''
+   ```
+### 2: Start Peer Register
+Start the Peer Register Node to manage node registration. Run the following command:
 
+### 3: Run All Nodes
+Use the following command to start the Nodes
 ```bash
-java PeerRegisterImpl
-# or, explicitly:
-java PeerRegisterImpl 1099 Node0
+java App <UID>
 ```
-
-2. **Start each Node** (in separate terminals). Usage from code:
-
-```text
-Usage: java App <nodeId> <startAt(HH:mm:ss)>
-```
-
-Example (staggered starts):
-
 ```bash
-java App 1 12:00:00
-java App 6 12:00:02
-java App 11 12:00:04
+java App 5 12:00:00
+java App 6 12:00:00
+java App 11 12:00:00
 ```
-
-The app binds the node as `Node<id>`, looks up the register at `Node0`, registers, and schedules an election start. When the first node reaches its start time it calls `announceElectionStart()` to block further joins and then begins the election.
-
-## Configuration
-
-| Component | Setting      | Default    | Notes                                                                    |
-| --------- | ------------ | ---------- | ------------------------------------------------------------------------ |
-| Register  | RMI port     | 1099       | `PeerRegisterImpl` main will create the registry if missing              |
-| Register  | Binding name | `Node0`    | Nodes look this up in `App`                                              |
-| Node      | Start time   | required   | `HH:mm:ss` local time; if time already passed, it schedules for tomorrow |
-| Node      | Binding      | `Node<id>` | Ex: `Node6`                                                              |
+Peer Register Node will handle the ring topology.
 
 ## Sample Output
-
 ```
 =============================================
  _   _    ___   ____   _____
@@ -79,16 +59,15 @@ The app binds the node as `Node<id>`, looks up the register at `Node0`, register
 PORT : 1099
 SCHEDULED START : 2025-09-24T12:00:02
 =============================================
-Process[6]: Registered with PeerRegister.
-Process[6]: Scheduled to start election at: 12:00:02 ...
 ```
+## Election Trigger
+This program assumes that the Nodes detected Leader Failure at the same time so they all initate Leader election at exactly the same time.
 
-## Notes & Caveats
-
-* Method names use the spelling **`recieveELECTION` / `recieveLEADER`** to match the source.
-* The register depends on a consistent binding pattern (`Node<id>`) to wire the ring.
-* On non‑Windows systems, replace the `cls` clear‑screen command with your platform equivalent.
-
-## License
-
-MIT (see LICENSE)
+## Key Classes & Methods
+- **Node & NodeImpl**: Implements election logic: initiate election & message forwarding.
+   -receiveELECTION(int uid): Handles election message forwarding.
+   -receiveLEADER(int uid): Handles leader announcement
+- **PeerRegisterImpl**: Implimentation of PeerRegistration logic.
+   -register(int id): Handles Node Registration.
+   -getSuccessor(int id): Get ID of next node.
+   -isElectionInProgress(): Checks to see if election is in progress. Used to block node registration during an election.
