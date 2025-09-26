@@ -4,16 +4,19 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 public class App {
-
+    
+    /**
+     * Prints a stylized display of the process information to the console.
+     */
     private static void printDISP(int nodeID, int registryPort, String nextNode, int nextPort) {
         String[] title = {
-        " _   _    ___   ____   _____ ",
-        "| \\ | |  /   \\ |  _ \\ | ____|",
-        "|  \\| | | | | || | | ||  _|  ",
-        "| |\\  | | |_| || |_| || |___ ",
-        "|_| \\_|  \\___/ |____/ |_____|",
-        "      P R O C E S S [" + nodeID + "]"
-    };
+            " _   _    ___   ____   _____ ",
+            "| \\ | |  /   \\ |  _ \\ | ____|",
+            "|  \\| | | | | || | | ||  _|  ",
+            "| |\\  | | |_| || |_| || |___ ",
+            "|_| \\_|  \\___/ |____/ |_____|",
+            "      P R O C E S S [" + nodeID + "]"
+        };
         System.out.println("=============================================");
         for (String line : title) System.out.println(line);
         System.out.println("---------------------------------------------");

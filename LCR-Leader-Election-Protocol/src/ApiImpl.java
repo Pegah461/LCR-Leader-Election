@@ -1,32 +1,49 @@
+
+// Implementation of the Api interface for LCR Leader Election protocol
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ApiImpl extends UnicastRemoteObject implements Api{
-    private Node Node = new Node(0);
-    private Api nextNode;
-    private int leaderID;
-    private boolean isLeader;
-    private final AtomicBoolean electionStarted = new AtomicBoolean(false);
-    private volatile boolean leaderKnown = false;
 
+/**
+ * ApiImpl provides the implementation of the LCR Leader Election protocol.
+ * It manages election logic, and message passing between nodes.
+ */
+public class ApiImpl extends UnicastRemoteObject implements Api {
+
+    private Node Node = new Node(0); // The local node instance
+    private Api nextNode; // Reference to the next node in the ring
+    private int leaderID; // The elected leader's ID
+    private boolean isLeader; // True if this node is the leader
+    private final AtomicBoolean electionStarted = new AtomicBoolean(false); // Ensures election starts only once
+    private volatile boolean leaderKnown = false; // Tracks if leader is known
+
+
+    // Constructor
     protected ApiImpl() throws RemoteException {
         super();
     }
 
-    public void setNode(int uid){
+    public void setNode(int uid) { // Sets the unique ID for this node.
         Node.setID(uid);
     }
 
-    public void setNextNode(Api nextNode){
+    public void setNextNode(Api nextNode) { // Sets the reference to the next node in the ring.
         this.nextNode = nextNode;
     }
 
-    public void setAsLeader(){
+
+    /**
+     * Marks this node as the leader.
+     */
+    public void setAsLeader() {
         this.isLeader = true;
     }
 
-    /** Safe one-time election trigger */
+
+    /**
+     * Safely triggers the election only once per node.
+     */
     public void initiateElectionOnce() {
         if (leaderKnown) {
             System.out.println("Process[" + Node.getID() + "] Leader already known. Ignoring start.");
@@ -39,6 +56,10 @@ public class ApiImpl extends UnicastRemoteObject implements Api{
         initiateElection();
     }
 
+
+    /**
+     * Initiates the election by sending an ELECTION message to the next node.
+     */
     private void initiateElection() {
         System.out.println("Process[" + Node.getID() + "] Initiating Election...");
         try {
@@ -53,50 +74,63 @@ public class ApiImpl extends UnicastRemoteObject implements Api{
         }
     }
 
+
+    /**
+     * Handles incoming ELECTION messages according to LCR protocol.
+     * @param uid Unique identifier of the sender node
+     */
     @Override
     public void receiveELECTION(int uid) throws RemoteException {
-
         // Slow down for demonstration purposes
-        try{
+        try {
             Thread.sleep(2000);
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        if(uid == this.Node.getID()){
+        if (uid == this.Node.getID()) {
+            // If UID of the incoming election message matches this node's ID,
+            // this node is the leader
             leaderID = this.Node.getID();
             this.setAsLeader();
 
             System.out.println("Process[" + this.Node.getID() + "] Received ELECTION(" + uid + ") Message. Declaring Victory...");
             System.out.println("Process[" + this.Node.getID() + "] Sending LEADER(" + leaderID + ") Announcement...");
-            this.nextNode.receiveLEADER(this.Node.getID());
+            this.nextNode.receiveLEADER(this.Node.getID()); // Announce self as leader
         }
 
-        if(uid > this.Node.getID()){
+        if (uid > this.Node.getID()) {
+            // Forward the election message if UID is higher than this node's ID
             System.out.println("Process[" + this.Node.getID() + "] Received ELECTION(" + uid + ") Message. Forwarding message");
             this.nextNode.receiveELECTION(uid);
-        }else if(uid < this.Node.getID()){
+        } else if (uid < this.Node.getID()) {
+            // Drop the election message if UID is lower than this node's ID
             System.out.println("Process[" + this.Node.getID() + "] Received ELECTION(" + uid + ") Message. Dropping message");
         }
     }
 
+    /**
+     * Handles incoming LEADER messages and propagates leader announcement.
+     * @param leaderID Unique identifier of the elected leader
+     */
     @Override
     public void receiveLEADER(int leaderID) throws RemoteException {
         // Slow down for demonstration purposes
-        try{
+        try {
             Thread.sleep(2000);
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        if(leaderID != this.Node.getID()){
-           System.out.println("Process[" + this.Node.getID() + "] Received LEADER(" + leaderID + ") Announcement");
-           System.out.println("Process[" + this.Node.getID() + "]: New Leader Is Process[" + leaderID + "]");
-           this.nextNode.receiveLEADER(leaderID);
-        }else if(leaderID == this.Node.getID()){
+        if (leaderID != this.Node.getID()) {
+            // Announce new leader to this node and forward
+            System.out.println("Process[" + this.Node.getID() + "] Received LEADER(" + leaderID + ") Announcement");
+            System.out.println("Process[" + this.Node.getID() + "]: New Leader Is Process[" + leaderID + "]");
+            this.nextNode.receiveLEADER(leaderID);
+        } else if (leaderID == this.Node.getID()) {
+            // All nodes have received the leader announcement
             System.out.println("All Processes Have Received LEADER(" + leaderID + ") Announcement.");
             System.out.println("Process[" + this.Node.getID() + "] Election Complete");
         }
-    
     }
 }
