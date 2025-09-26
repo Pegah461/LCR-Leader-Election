@@ -99,7 +99,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
         }
         // crude self-loop guard if more than one peer expected
         if (nextNode == this && PeerRegisterLookup.tryLookup() != null) {
-            System.out.println("Process[" + id + "]: Next points to self — ring not wired yet. Aborting start.");
+            System.out.println("Process[" + id + "]: No other Nodes in the Ring. Aborting start.");
             return;
         }
 
