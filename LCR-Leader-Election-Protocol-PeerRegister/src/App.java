@@ -31,7 +31,7 @@ public class App {
         }
 
         final int nodeId;
-        final String startAtStr = args[1];
+        String startAtStr = args[1];
         try {
             nodeId = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
@@ -68,16 +68,29 @@ public class App {
             }
             System.out.println("Process[" + nodeId + "]: Registered with PeerRegister.");
 
-            // 5) Parse wall-clock time and schedule start
+            // Parse wall-clock start time and schedule a simultaneous start
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm:ss");
-            LocalTime targetTime = LocalTime.parse(startAtStr, fmt);
-
             ZoneId zone = ZoneId.systemDefault();
             LocalDate today = LocalDate.now(zone);
-            ZonedDateTime startZdt = ZonedDateTime.of(today, targetTime, zone);
-            if (startZdt.isBefore(ZonedDateTime.now(zone))) {
-                // if time already passed today, schedule for tomorrow
-                startZdt = startZdt.plusDays(1);
+            ZonedDateTime startZdt = null;
+            LocalTime t = null;
+            java.util.Scanner scanner = new java.util.Scanner(System.in);
+            boolean validTime = false;
+            while (!validTime) {
+                try {
+                    t = LocalTime.parse(startAtStr, fmt);
+                    startZdt = ZonedDateTime.of(today, t, zone);
+                    if (startZdt.isBefore(ZonedDateTime.now(zone))) {
+                        // If time already passed today, ask user for a new time
+                        System.out.println("The time you entered has already passed. Please enter a new time (HH:mm:ss): ");
+                        startAtStr = scanner.nextLine();
+                    } else {
+                        validTime = true;
+                    }
+                } catch (Exception e) {
+                    System.out.println("Invalid time format. Please enter time as HH:mm:ss: ");
+                    startAtStr = scanner.nextLine();
+                }
             }
 
             long millis = Duration.between(Instant.now(), startZdt.toInstant()).toMillis();

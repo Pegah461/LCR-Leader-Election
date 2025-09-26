@@ -4,14 +4,14 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NodeImpl extends UnicastRemoteObject implements Node {
-    private final int id;
-    private volatile int leaderId;
-    private volatile Node nextNode;
-    private volatile boolean isLeader;
+    private final int id; // Unique identifier for the node
+    private volatile int leaderId; // Current leader's UID
+    private volatile Node nextNode; // Reference to the next node in the ring
+    private volatile boolean isLeader;  // Flag indicating if this node is the leader
     private volatile boolean hasVoted;
-    private final AtomicBoolean uiStarted = new AtomicBoolean(false);
+    private final AtomicBoolean uiStarted = new AtomicBoolean(false); 
 
-    public NodeImpl(int nodeId) throws RemoteException {
+    public NodeImpl(int nodeId) throws RemoteException { // Constructor
         super();
         this.id = nodeId;
         this.isLeader = false;
@@ -43,10 +43,10 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
             return;
         }
 
-        if (this.id > UID) {
+        if (this.id > UID) { // Discard lower UID
             System.out.println("Process[" + this.id + "]: Received ELECTION(" + UID + ") message. Dropping message.");
             this.hasVoted = true;
-        } else if (this.id < UID) {
+        } else if (this.id < UID) { // Forward higher UID
             System.out.println("Process[" + this.id + "]: Receiving ELECTION(" + UID + ") message. Forwarding message.");
             this.hasVoted = true;
             nextNode.recieveELECTION(UID);
@@ -90,10 +90,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
         startUiOnce(); // allow user to exit or start new election
         return;
     }
-
-    @Override
-    public int getId() { return this.id; }
-
 
     public void initiateElection() {
 
@@ -142,13 +138,13 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
             }
         }
     }
-    private void startUiOnce() {
+    private void startUiOnce() { // This methods will be called after election ends. It askes user to exit..
         if (uiStarted.compareAndSet(false, true)) {
             new Thread(this::handleUserInput, "UI-" + id).start();
         }
     }
 
-    /** Helper: lightweight locator for the register (Node0 @ default port). */
+    /** Helper: locator for the register (Node0 @ default port). */
     static class PeerRegisterLookup {
         static PeerRegister tryLookup() {
             try {

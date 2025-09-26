@@ -5,7 +5,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PeerRegisterImpl extends UnicastRemoteObject implements PeerRegister {
@@ -33,7 +32,7 @@ public class PeerRegisterImpl extends UnicastRemoteObject implements PeerRegiste
             return true;
         }
 
-        // Add new peer in join order (LinkedHashMap preserves insertion order)
+        // Add new peer in join order 
         peers.put(id, new Peer(id));
         System.out.println("[PR] Registered Process[" + id + "]");
         logRing();
@@ -95,7 +94,9 @@ public class PeerRegisterImpl extends UnicastRemoteObject implements PeerRegiste
     }
 
     @Override
-    public boolean isElectionInProgress() { return electionInProgress.get(); }
+    public boolean isElectionInProgress() { 
+        return electionInProgress.get(); 
+    }
 
     @Override
     public void announceElectionStart() {
@@ -114,8 +115,7 @@ public class PeerRegisterImpl extends UnicastRemoteObject implements PeerRegiste
         System.out.println("[PR] Current ring (join order): " + peers.keySet());
     }
 
-    /** Optional standalone launcher (binds as "Node0" by default). */
-
+    // Node Title Art
     private static void printDISP(int registryPort) {
         String[] title = {
         " _   _    ___   ____   _____ ",
