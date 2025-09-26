@@ -74,9 +74,9 @@ This program assumes that the Nodes detected Leader Failure at the same time so 
 
 ## Core Classes
 - **Node & NodeImpl**: Implements election logic: initiate election & message forwarding.
-   -receiveELECTION(int uid): Handles election message forwarding.
-   -receiveLEADER(int uid): Handles leader announcement
+-receiveELECTION(int uid): Handles election message forwarding.
+-receiveLEADER(int uid): Handles leader announcement
 - **PeerRegisterImpl**: Implimentation of PeerRegistration logic.
-   -register(int id): Handles Node Registration.
-   -getSuccessor(int id): Get ID of next node.
-   -isElectionInProgress(): Checks to see if election is in progress. Used to block node registration during an election.
+-register(int id): Handles Node Registration.
+-getSuccessor(int id): Get ID of next node.
+-isElectionInProgress(): Checks to see if election is in progress. Used to block node registration during an election.
