@@ -3,12 +3,12 @@ This repository contains two java implementations of the LCR Leader Election Pro
 
 ## Project Files
 1. **LCR-Leader-Election-Protocol**
-   An implementation of LCR Leader Election Protocol where nodes are manually linked to their successor so ensure that communication is in a ring topology.
+   An implementation of LCR Leader Election Protocol where nodes are manually linked to their successor to ensure that communication is in a ring topology.
    
-   [README for LCR-Leader-Election-Protocol]
+   [README for LCR-Leader-Election-Protocol](https://github.com/Pegah461/LCR-Leader-Election/blob/main/LCR-Leader-Election-Protocol/README.md)
 3. **LCR-Leader-Election-Protocol-PeerRegister**
-   An advanced implementation of LCR Leader Election Protocol where the nodes relys on a 'PeerRegister' Node to to register and manage the ring network.
+   An advanced implementation of LCR Leader Election Protocol where the nodes relys on a 'PeerRegister' Node to register and manage the ring network.
 
-   [README for LCR-Leader-Election-Protocol-PeerRegister]
+   [README for LCR-Leader-Election-Protocol-PeerRegister](https://github.com/Pegah461/LCR-Leader-Election/blob/main/LCR-Leader-Election-Protocol-PeerRegister/README.md)
 
 
