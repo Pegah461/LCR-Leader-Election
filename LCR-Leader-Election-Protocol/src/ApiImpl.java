@@ -1,9 +1,8 @@
-
 // Implementation of the Api interface for LCR Leader Election protocol
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 
 /**
  * ApiImpl provides the implementation of the LCR Leader Election protocol.
@@ -17,7 +16,7 @@ public class ApiImpl extends UnicastRemoteObject implements Api {
     private boolean isLeader; // True if this node is the leader
     private final AtomicBoolean electionStarted = new AtomicBoolean(false); // Ensures election starts only once
     private volatile boolean leaderKnown = false; // Tracks if leader is known
-
+    private final AtomicBoolean uiStarted = new AtomicBoolean(false);
 
     // Constructor
     protected ApiImpl() throws RemoteException {
@@ -73,7 +72,6 @@ public class ApiImpl extends UnicastRemoteObject implements Api {
             System.out.println("Process[" + Node.getID() + "] Failed To Initiate Election: " + e.getMessage());
         }
     }
-
 
     /**
      * Handles incoming ELECTION messages according to LCR protocol.
@@ -131,6 +129,28 @@ public class ApiImpl extends UnicastRemoteObject implements Api {
             // All nodes have received the leader announcement
             System.out.println("All Processes Have Received LEADER(" + leaderID + ") Announcement.");
             System.out.println("Process[" + this.Node.getID() + "] Election Complete");
+        }
+        startUiOnce();
+    }
+
+    /** Public so App can call it. */
+    public void handleUserInput() {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("Type 'exit' to quit:");
+            String command = scanner.nextLine();
+
+            if (command.equalsIgnoreCase("exit")) {
+                System.out.println("Exiting...");
+                System.exit(0);
+            } else {
+                System.out.println("Invalid command.");
+            }
+        }
+    }
+    private void startUiOnce() { // This methods will be called after election ends. It askes user to exit..
+        if (uiStarted.compareAndSet(false, true)) {
+            new Thread(this::handleUserInput, "UI-" + this.Node.getID()).start();
         }
     }
 }
