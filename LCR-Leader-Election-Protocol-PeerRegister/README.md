@@ -9,7 +9,7 @@
   * [Prerequisites](#prerequisites)
   * [Setup Instructions](#setup-instructions)
 * [Election Trigger](#election-trigger)
-* [Key Classes & Methods](#key-classes-&-methods)
+* [Core Classes](#core-classes)
 
 ## Overview
 A Java RMI implementation of the **Le Lann–Chang–Roberts (LCR)** leader election algorithm with a **Peer Register Node** that coordinates ring formation and blocks any other Nodes from joining during an election.
@@ -72,7 +72,7 @@ SCHEDULED START : 2025-09-24T12:00:02
 ## Election Trigger
 This program assumes that the Nodes detected Leader Failure at the same time so they all initiate Leader election at exactly the same time.
 
-## Key Classes & Methods
+## Core Classes
 - **Node & NodeImpl**: Implements election logic: initiate election & message forwarding.
    -receiveELECTION(int uid): Handles election message forwarding.
    -receiveLEADER(int uid): Handles leader announcement
