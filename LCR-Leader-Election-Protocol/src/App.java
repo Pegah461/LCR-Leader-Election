@@ -5,15 +5,18 @@ import java.time.format.DateTimeFormatter;
 
 public class App {
 
+    /**
+     * Prints a stylized display of the process information to the console.
+     */
     private static void printDISP(int nodeID, int registryPort, String nextNode, int nextPort) {
         String[] title = {
-        " _   _    ___   ____   _____ ",
-        "| \\ | |  /   \\ |  _ \\ | ____|",
-        "|  \\| | | | | || | | ||  _|  ",
-        "| |\\  | | |_| || |_| || |___ ",
-        "|_| \\_|  \\___/ |____/ |_____|",
-        "      P R O C E S S [" + nodeID + "]"
-    };
+            " _   _    ___   ____   _____ ",
+            "| \\ | |  /   \\ |  _ \\ | ____|",
+            "|  \\| | | | | || | | ||  _|  ",
+            "| |\\  | | |_| || |_| || |___ ",
+            "|_| \\_|  \\___/ |____/ |_____|",
+            "      P R O C E S S [" + nodeID + "]"
+        };
         System.out.println("=============================================");
         for (String line : title) System.out.println(line);
         System.out.println("---------------------------------------------");
@@ -77,20 +80,32 @@ public class App {
 
             // Parse wall-clock start time and schedule a simultaneous start
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm:ss");
-            LocalTime t = LocalTime.parse(startAtStr, fmt);
-
             ZoneId zone = ZoneId.systemDefault();
             LocalDate today = LocalDate.now(zone);
-            ZonedDateTime startZdt = ZonedDateTime.of(today, t, zone);
-            if (startZdt.isBefore(ZonedDateTime.now(zone))) {
-                // if time already passed today, schedule for tomorrow at same time
-                startZdt = startZdt.plusDays(1);
+            ZonedDateTime startZdt = null;
+            LocalTime t = null;
+            java.util.Scanner scanner = new java.util.Scanner(System.in);
+            boolean validTime = false;
+            while (!validTime) {
+                try {
+                    t = LocalTime.parse(startAtStr, fmt);
+                    startZdt = ZonedDateTime.of(today, t, zone);
+                    if (startZdt.isBefore(ZonedDateTime.now(zone))) {
+                        // If time already passed today, ask user for a new time
+                        System.out.println("The time you entered has already passed. Please enter a new time (HH:mm:ss): ");
+                        startAtStr = scanner.nextLine();
+                    } else {
+                        validTime = true;
+                    }
+                } catch (Exception e) {
+                    System.out.println("Invalid time format. Please enter time as HH:mm:ss: ");
+                    startAtStr = scanner.nextLine();
+                }
             }
 
             long millis = Duration.between(Instant.now(), startZdt.toInstant()).toMillis();
 
             printDISP(nodeID, registryPort, nextNode, nextPort);
-            //System.out.println("Process[" + nodeID + "]: Connected To: " + nextNode);
             System.out.println("Process[" + nodeID + "] Scheduled to Start Election At: " + startZdt);
 
             Thread starter = new Thread(() -> {
