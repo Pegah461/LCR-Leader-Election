@@ -16,7 +16,7 @@ A Java RMI implementation of the **Le Lann–Chang–Roberts (LCR)** leader elec
 ├─ Node.java                # RMI interface for node-to-node RPC
 ├─ NodeImpl.java            # Node logic (recieveELECTION / recieveLEADER)
 ├─ PeerRegister.java        # RMI interface for the register
-├─ PeerRegisterImpl.java    # Register logic (join order, rewiring, gating)
+├─ PeerRegisterImpl.java    # Node Registration logic
 ```
 
 ## Prerequisites
