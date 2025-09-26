@@ -75,9 +75,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
             if (pr != null) {
                 try { pr.announceElectionEnd(UID); } catch (Exception ignored) {}
             }
-
-            startUiOnce(); // allow user to exit or start new election
-            return;
         }else{
             this.hasVoted = false;
             this.isLeader = false;

@@ -101,14 +101,14 @@ public class PeerRegisterImpl extends UnicastRemoteObject implements PeerRegiste
     @Override
     public void announceElectionStart() {
         if (electionInProgress.compareAndSet(false, true)) {
-            System.out.println("[PR] Election STARTED — new registrations are blocked.");
+            System.out.println("[PR] Election STARTED... new registrations are blocked.");
         }
     }
 
     @Override
     public void announceElectionEnd(int leaderId) {
         electionInProgress.set(false);
-        System.out.println("[PR] Election ENDED — Leader: Node(" + leaderId + "). Registrations reopened.");
+        System.out.println("[PR] Election ENDED... Leader: Node(" + leaderId + "). Registrations reopened.");
     }
 
     private void logRing() {
