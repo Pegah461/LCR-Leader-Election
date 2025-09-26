@@ -1,5 +1,16 @@
 # LCR Leader Election Protocol — Peer Register
 
+## Table of Contents
+
+* [Overview](#overview)
+* [Features](#features)
+* [Project Structure](#project-structure)
+* [Getting Started](#getting-started)
+  * [Prerequisites](#prerequisites)
+  * [Setup Instructions](#setup-instructions)
+* [Election Trigger](#election-trigger)
+* [Key Classes & Methods](#key-classes-&-methods)
+
 ## Overview
 A Java RMI implementation of the **Le Lann–Chang–Roberts (LCR)** leader election algorithm with a **Peer Register Node** that coordinates ring formation and blocks any other Nodes from joining during an election.
 
@@ -18,23 +29,21 @@ A Java RMI implementation of the **Le Lann–Chang–Roberts (LCR)** leader elec
 ├─ PeerRegister.java        # RMI interface for the register
 ├─ PeerRegisterImpl.java    # Node Registration logic
 ```
-
-## Prerequisites
+## Getting Started
+### Prerequisites
 * Java 17+ (or compatible)
 
-## How It Works
-
-## Setup Instructions
-### 1: Compile The Code
+### Setup Instructions
+#### 1: Compile The Code
 1. Open terminal and navigate to the directory that contains the source files.
 2. Compile the source files using the `javac` command:
    ```bash
    javac *.java
    ```
-### 2: Start Peer Register
+#### 2: Start Peer Register
 Start the Peer Register Node to manage node registration. Run the following command:
 
-### 3: Run All Nodes
+#### 3: Run All Nodes
 Use the following command to start the Nodes
 ```bash
 java App <UID>
@@ -46,7 +55,7 @@ java App 11 12:00:00
 ```
 Peer Register Node will handle the ring topology.
 
-## Sample Output
+#### Sample Output
 ```
 =============================================
  _   _    ___   ____   _____
@@ -61,7 +70,7 @@ SCHEDULED START : 2025-09-24T12:00:02
 =============================================
 ```
 ## Election Trigger
-This program assumes that the Nodes detected Leader Failure at the same time so they all initate Leader election at exactly the same time.
+This program assumes that the Nodes detected Leader Failure at the same time so they all initiate Leader election at exactly the same time.
 
 ## Key Classes & Methods
 - **Node & NodeImpl**: Implements election logic: initiate election & message forwarding.

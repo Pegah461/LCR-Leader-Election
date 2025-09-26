@@ -1,9 +1,5 @@
 # LCR Leader Election (Java RMI)
 
-A simple Java implementation of the **Le Lann–Chang–Roberts (LCR) Leader Election algorithm** using **Java RMI**. This project demonstrates distributed systems concepts, where processes (nodes) arranged in a ring topology elect a single leader.
-
----
-
 ## Table of Contents
 
 * [Overview](#overview)
