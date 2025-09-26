@@ -1,65 +1,15 @@
-# LCR Leader Election Protocol — Peer Register Edition
-
-A Java RMI implementation of the **Le Lann–Chang–Roberts (LCR)** leader election algorithm with a **central Peer Register** that coordinates ring formation and blocks late joiners during an election.
+# LCR Leader Election Protocol — Peer Register
 
 ## Overview
-
-* **PeerRegister / PeerRegisterImpl** expose registration and diagnostics:
-
-  * `register(int id) : boolean` — accept a node if no election is in progress and wire it into the ring
-  * `getSuccessor(int id) : Node` — return the successor stub chosen by the register
-  * `isElectionInProgress() : boolean` — allow nodes to check state
-  * `announceElectionStart() : void` — flip the in‑progress flag to prevent new registrations
-  * `announceElectionEnd(int leaderId) : void` — clear flag and log the winner
-
-* **Node / NodeImpl** are the participants. RPC methods (as defined in your code) are:
-
-  * `recieveELECTION(int uid)` — forward/drop the candidate ID clockwise (method name spelled as in source)
-  * `recieveLEADER(int uid)` — propagate the winner announcement once
-  * `setNextNode(Node next)` and `getId()` — ring wiring helpers
-
-* **App** is the process launcher for a node. It:
-
-  * Ensures a local RMI registry on port 1099
-  * Binds this process as `Node<id>`
-  * Looks up the register under **`Node0`**
-  * Registers the node (rewiring handled by the register)
-  * Schedules the election start at a wall‑clock time
+A Java RMI implementation of the **Le Lann–Chang–Roberts (LCR)** leader election algorithm with a **Peer Register Node** that coordinates ring formation and blocks any other Nodes from joining during an election.
 
 ## Features
-
-* ✅ Centralized join/wiring with insertion into a live ring (predecessor → new → successor)
-* ✅ Election gating: register rejects joins while an election is active
-* ✅ Simple console banners for both Peer Register and Nodes
-* ✅ Wall‑clock **startAt** scheduling per node
-
-## Architecture
-
-```mermaid
-sequenceDiagram
-  participant PR as PeerRegister
-  participant A as Node A
-  participant B as Node B
-  participant C as Node C
-
-  A->>PR: register(1)
-  B->>PR: register(6)
-  C->>PR: register(11)
-  PR-->>A: setNext: pred→A→succ
-  PR-->>B: setNext: pred→B→succ
-  PR-->>C: setNext: pred→C→succ
-
-  A->>PR: announceElectionStart()
-  A->>B: recieveELECTION(1)
-  B->>C: recieveELECTION(1)
-  C->>A: recieveELECTION(1)  (A detects own id → leader)
-  A->>B: recieveLEADER(1)
-  B->>C: recieveLEADER(1)
-  C->>PR: announceElectionEnd(1)
-```
+- **Peer Registration**: A Peer Register Node is responsible to register peers and ensuring which peer is connected to which one in a ring topology.
+- **Leader Election**: All nodes in the ring are aware of their next node so will either forward or drop an election message based on their UID.
+- **Time To Start**: All nodes will have to start the election at the same time to ensure concurrency.
+- **Remote Communication: Messages sent between nodes are done remotely using RMI.
 
 ## Project Structure
-
 ```
 .
 ├─ App.java                 # Node launcher and scheduler
@@ -70,27 +20,19 @@ sequenceDiagram
 └─ README.md
 ```
 
-## Getting Started
-
 ### Prerequisites
-
 * Java 17+ (or compatible)
-* Maven or Gradle
-* Windows console (uses `cmd /c cls` to clear screen); adjust if on macOS/Linux
 
-### Build
+### How It Works
 
-```bash
-# Maven
-mvn clean package
 
-# Gradle
-./gradlew build
-```
-
-### Run
-
-1. **Start the Peer Register** (binds as `Node0` by default, port 1099):
+### Setup Instructions
+### 1: Compile The Code
+1. Open terminal and navigate to the directory that contains the source files.
+2. Compile the source files using the 'javac' command:
+   '''bash
+   javac *.java
+   '''
 
 ```bash
 java PeerRegisterImpl
