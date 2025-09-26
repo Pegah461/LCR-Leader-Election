@@ -10,11 +10,10 @@ A simple Java implementation of the **Le Lann–Chang–Roberts (LCR) Leader Ele
 * [Features](#features)
 * [Project Structure](#project-structure)
 * [Getting Started](#getting-started)
-
   * [Prerequisites](#prerequisites)
   * [Compile](#compile)
   * [Run](#run)
-* [Usage](#usage)
+* [How It Works](#How-It-Works)
 * [Core Classes](#core-classes)
 
 ---
@@ -47,38 +46,31 @@ LCR-Leader-Election-Protocol/
 * Java 17+ (or compatible version)
 
 ### Compile
-
+Compile the source files using the following command:
 ```bash
-javac *.java    #compiles all the java classes
+javac *.java
 ```
-
 ### Run
-
 Each process is launched as a separate JVM instance:
-
+When running the nodes, ensure that the nodes are connected in a circular manner
 ```bash
 java App <process_id> <nextProcess> <registryPort> <nextPort> <startAt(HH:mm:ss)>
 ```
-
-Example:
-
+####Example:
 ```bash
 java App 5 process11 1099 1100 12:00:00  
 java App 11 process2 1100 1101 12:00:00
 java App 2 process7 1101 1102 12:00:00
 java App 7 process5 1102 1099 12:00:00
-#Note: The time has to be the same for all nodes in the ring.
-#      In this way they all gonna start the election at the sametime.
 ```
 
-## Usage
+## How It Works
 
 * Each process starts with a unique ID.
 * At the scheduled `startAt` time, the election begins.
 * The elected leader is displayed in the console logs.
 
 Sample console output:
-
 ```
 =============================================
  _   _    ___   ____   _____
